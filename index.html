@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HOTFUEL">
+<meta name="theme-color" content="#0f0f1e">
+<title>HOTFUEL Craiova</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ===== RESET & VARIABILE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg:        #0a0a18;
+    --bg2:       #0f0f1e;
+    --header:    #11112a;
+    --card:      #161628;
+    --card2:     #1d1d38;
+    --border:    rgba(255,255,255,0.07);
+    --accent:    #e94560;
+    --accent2:   #ff2d55;
+    --text:      #f0f0ff;
+    --text2:     #8888aa;
+    --text3:     #55557a;
+    --benzina:   #f59e0b;
+    --premium:   #ea580c;
+    --motorina:  #3b82f6;
+    --gpl:       #10b981;
+    --petrom:    #e11d48;
+    --omv:       #005CA8;
+    --lukoil:    #ef4444;
+    --mol:       #34d399;
+    --rompetrol: #f59e0b;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+html { background: var(--bg); }
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    overflow-x: hidden;
+    padding-top: var(--safe-top);
+    padding-bottom: calc(var(--safe-bot) + 80px);
+}
+
+/* ===== HEADER ===== */
+header {
+    background: var(--header);
+    padding: 16px 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 0 20px rgba(233,69,96,0.4);
+}
+
+.logo-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.logo-sub {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 1px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: var(--text2);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-icon:active { transform: scale(0.92); background: var(--accent); color: #fff; }
+
+#btn-profile {
+    width: auto;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    gap: 6px;
+    color: var(--text);
+}
+
+.status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gpl);
+    animation: pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+/* ===== LOADING BAR ===== */
+#loading-bar {
+    height: 2px;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.3s ease;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 999;
+}
+
+/* ===== TOOLBAR ===== */
+.toolbar {
+    background: var(--bg2);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 71px;
+    z-index: 99;
+}
+
+.filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+
+.btn-fuel {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-fuel.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 16px rgba(233,69,96,0.35);
+}
+
+.btn-fuel:active { transform: scale(0.95); }
+
+.sort-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.sort-label {
+    font-size: 12px;
+    color: var(--text3);
+    white-space: nowrap;
+}
+
+select {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.station-filter {
+    flex: 1.2;
+}
+
+/* ===== CONTENUT PRINCIPAL ===== */
+main {
+    padding: 16px;
+}
+
+.status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.status-text {
+    font-size: 12px;
+    color: var(--text3);
+}
+
+.last-update {
+    font-size: 11px;
+    color: var(--text3);
+}
+
+/* ===== GRID STAȚII ===== */
+#stations-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+@media (min-width: 640px) {
+    #stations-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ===== CARD STAȚIE ===== */
+.station-card {
+    background: var(--card);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-top-bar { height: 4px; width: 100%; }
+.card-body { padding: 18px 20px 16px; }
+
+/* Header card */
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.station-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+}
+
+.card-info { flex: 1; min-width: 0; }
+
+.station-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.station-meta {
+    font-size: 12px;
+    color: var(--text3);
+}
+
+.gpl-tag {
+    background: rgba(16,185,129,0.12);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: var(--gpl);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+/* Prețuri */
+.prices-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    min-height: 54px;
+    align-items: center;
+}
+
+.price-badge {
+    background: var(--card2);
+    border-radius: 10px;
+    padding: 7px 11px;
+    border-left: 3px solid;
+    flex-shrink: 0;
+}
+
+.price-badge-label {
+    font-size: 10px;
+    color: var(--text3);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.price-badge-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.price-unit {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.7;
+    margin-left: 1px;
+}
+
+/* Calcul cost */
+.cost-info {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.cost-total {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.cost-diff {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.cost-diff.save { color: var(--gpl); }
+.cost-diff.lose { color: var(--accent); }
+.cost-diff.avg  { color: var(--text3); }
+
+/* Footer card */
+.card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-navigate {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-navigate:active {
+    transform: scale(0.96);
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Loading */
+.loading-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(233,69,96,0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+    font-size: 13px;
+    color: var(--text3);
+    font-style: italic;
+}
+
+/* ===== SKELETON LOADER ===== */
+.skeleton {
+    background: linear-gradient(90deg, var(--card) 25%, var(--card2) 50%, var(--card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--header);
+    border-top: 1px solid var(--border);
+    padding: 10px 0 calc(10px + var(--safe-bot));
+    display: flex;
+    justify-content: space-around;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px 20px;
+    border-radius: 10px;
+    color: var(--text3);
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-btn.active { color: var(--accent); }
+.nav-btn:active { transform: scale(0.92); }
+.nav-icon { font-size: 20px; }
+.nav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.3px; }
+
+/* ===== MODAL PROFIL ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal-sheet {
+    background: var(--card);
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    padding: 20px 24px calc(24px + var(--safe-bot));
+    border-top: 1px solid var(--border);
+    animation: slideUp 0.3s ease;
+    max-height: 92dvh;
+    overflow-y: auto;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+
+.modal-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+}
+
+.modal-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.modal-sub {
+    font-size: 13px;
+    color: var(--text3);
+    margin-bottom: 24px;
+}
+
+.form-group { margin-bottom: 16px; }
+
+.form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-input, .form-select {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus, .form-select:focus {
+    border-color: var(--accent);
+}
+
+.radio-group {
+    display: flex;
+    gap: 10px;
+}
+
+.radio-btn {
+    flex: 1;
+    padding: 11px;
+    background: var(--card2);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text2);
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.radio-btn.selected {
+    background: rgba(233,69,96,0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn-save {
+    width: 100%;
+    padding: 15px;
+    background: var(--accent);
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(233,69,96,0.35);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-save:active { transform: scale(0.98); opacity: 0.9; }
+
+.err-msg {
+    color: var(--accent);
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+}
+
+/* ===== BANNER OFFLINE ===== */
+#offline-banner {
+    display: none;
+    background: var(--accent);
+    color: #fff;
+    text-align: center;
+    padding: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+}
+
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: var(--text2); }
+.empty-sub { font-size: 14px; }
+
+/* ===== TOAST ===== */
+#toast {
+    position: fixed;
+    bottom: calc(90px + var(--safe-bot));
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--card2);
+    color: var(--text);
+    padding: 12px 22px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    z-index: 300;
+    opacity: 0;
+    transition: all 0.3s;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- Loading bar -->
+<div id="loading-bar"></div>
+
+<!-- Offline banner -->
+<div id="offline-banner">⚠️ Offline — afișez ultimele prețuri cunoscute</div>
+
+<!-- Header -->
+<header>
+    <div class="logo-wrap">
+        <div class="logo-icon">⛽</div>
+        <div>
+            <div class="logo-text">HOTFUEL</div>
+            <div class="logo-sub">Craiova</div>
+        </div>
+    </div>
+    <div class="header-right">
+        <button class="btn-icon" id="btn-refresh" title="Actualizează prețurile" onclick="forceRefresh()">🔄</button>
+        <button class="btn-icon" id="btn-profile" onclick="openProfile()">
+            <span id="profile-icon">👤</span>
+            <span id="profile-label">Cont</span>
+        </button>
+    </div>
+</header>
+
+<!-- Toolbar filtre -->
+<div class="toolbar">
+    <div class="filter-row" id="fuel-filters">
+        <button class="btn-fuel active" data-fuel="toate" onclick="setFuel('toate', this)">⛽ Toate</button>
+        <button class="btn-fuel" data-fuel="benzina" onclick="setFuel('benzina', this)">🟡 Benzină</button>
+        <button class="btn-fuel" data-fuel="motorina" onclick="setFuel('motorina', this)">🔵 Motorină</button>
+        <button class="btn-fuel" data-fuel="gpl" onclick="setFuel('gpl', this)">🟢 GPL</button>
+    </div>
+    <div class="sort-row">
+        <span class="sort-label">Rețea:</span>
+        <select id="filter-retea" class="station-filter" onchange="renderCards()">
+            <option value="Toate">Toate rețelele</option>
+            <option value="PETROM">Petrom</option>
+            <option value="OMV">OMV</option>
+            <option value="MOL">MOL</option>
+            <option value="LUKOIL">Lukoil</option>
+            <option value="ROMPETROL">Rompetrol</option>
+        </select>
+        <span class="sort-label">Sortare:</span>
+        <select id="filter-sort" onchange="renderCards()">
+            <option value="default">Implicit</option>
+            <option value="cheapest">Cel mai ieftin</option>
+            <option value="expensive">Cel mai scump</option>
+        </select>
+    </div>
+</div>
+
+<!-- Main content -->
+<main>
+    <div class="status-bar">
+        <span class="status-text" id="status-text">Se încarcă...</span>
+        <span class="last-update" id="last-update"></span>
+    </div>
+    <div id="stations-grid"></div>
+</main>
+
+<!-- Bottom navigation -->
+<nav class="bottom-nav">
+    <div class="nav-btn active" onclick="scrollToTop()">
+        <span class="nav-icon">⛽</span>
+        <span class="nav-label">Prețuri</span>
+    </div>
+    <div class="nav-btn" onclick="showCheapest()">
+        <span class="nav-icon">💰</span>
+        <span class="nav-label">Cel mai ieftin</span>
+    </div>
+    <div class="nav-btn" onclick="openProfile()">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profil</span>
+    </div>
+</nav>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+<!-- Modal Profil -->
+<div class="modal-overlay" id="profile-modal" onclick="handleModalClick(event)">
+    <div class="modal-sheet" id="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">👤 Profilul Meu</div>
+        <div class="modal-sub">Configurează mașina ta pentru calcule personalizate</div>
+
+        <div class="form-group">
+            <label class="form-label">Prenume</label>
+            <input type="text" id="input-name" class="form-input" placeholder="ex: Alex" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="input-email" class="form-input" placeholder="ex: alex@gmail.com" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Marcă Mașină</label>
+            <select id="sel-marca" class="form-select" onchange="updateModels()">
+                <option value="">Alege marca</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Model</label>
+            <select id="sel-model" class="form-select" onchange="updateGens()">
+                <option value="">Alege modelul</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Generație / Motor</label>
+            <select id="sel-gen" class="form-select">
+                <option value="">Alege generația</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Carburant folosit</label>
+            <div class="radio-group">
+                <div class="radio-btn selected" data-val="benzina" onclick="selectCarb(this)">⛽ Benzină</div>
+                <div class="radio-btn" data-val="motorina" onclick="selectCarb(this)">🔵 Motorină</div>
+                <div class="radio-btn" data-val="gpl" onclick="selectCarb(this)">🟢 GPL</div>
+            </div>
+        </div>
+        <div class="err-msg" id="form-err">Te rog completează toate câmpurile!</div>
+        <button class="btn-save" onclick="saveProfile()">✅ Salvează Profilul</button>
+
+        <div id="logout-section" style="display:none; margin-top:16px; text-align:center;">
+            <button class="btn-fuel" onclick="logout()" style="color:var(--accent); border-color:var(--accent); padding: 8px 20px;">
+                Deconectare
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+//  STATE GLOBAL
+// ============================================================
+let allStations = [];
+let pricesData  = {};
+let averages    = {};
+let carDb       = {};
+let currentUser = JSON.parse(localStorage.getItem('hf_user') || 'null');
+let currentFuel = 'toate';
+let isLoading   = false;
+let autoRefreshTimer = null;
+
+// Culori rețele
+const NET_COLORS = {
+    PETROM: '#e11d48', OMV: '#005CA8', LUKOIL: '#ef4444',
+    MOL: '#34d399', ROMPETROL: '#f59e0b', EUROGENETIC: '#1e40af'
+};
+
+// Culorile carburanților
+const FUEL_COLORS = {
+    benzina: 'var(--benzina)', benzina_premium: 'var(--premium)',
+    motorina: 'var(--motorina)', motorina_premium: '#1d4ed8', gpl: 'var(--gpl)'
+};
+
+const FUEL_LABELS_MAP = {
+    benzina: 'Benzină', benzina_premium: 'Prem.99',
+    motorina: 'Motorină', motorina_premium: 'Mot.+', gpl: 'GPL'
+};
+
+// ============================================================
+//  INIȚIALIZARE
+// ============================================================
+async function init() {
+    updateProfileUI();
+    await Promise.all([loadCars(), loadStations()]);
+    await loadAverages();
+    renderCards();
+    startAutoRefresh();
+    checkOnline();
+    registerSW();
+}
+
+function registerSW() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(e => console.log('SW:', e));
+    }
+}
+
+function checkOnline() {
+    const banner = document.getElementById('offline-banner');
+    window.addEventListener('offline', () => banner.style.display = 'block');
+    window.addEventListener('online',  () => { banner.style.display = 'none'; loadStations(); });
+}
+
+// ============================================================
+//  API CALLS
+// ============================================================
+async function loadStations() {
+    try {
+        setLoadingBar(30);
+        const res  = await fetch('/api/stations');
+        const data = await res.json();
+        setLoadingBar(80);
+
+        allStations = data.stations || [];
+        pricesData  = {};
+        allStations.forEach(s => { pricesData[s.id] = s.prices || {}; });
+
+        isLoading = data.is_loading || false;
+        updateLastUpdate(data.last_update);
+        setLoadingBar(100);
+    } catch (e) {
+        console.error('Eroare încărcare stații:', e);
+        showToast('⚠️ Nu pot conecta la server');
+    }
+}
+
+async function loadAverages() {
+    try {
+        const res = await fetch('/api/averages');
+        averages = await res.json();
+    } catch(e) {}
+}
+
+async function loadCars() {
+    try {
+        const res = await fetch('/api/cars');
+        carDb = await res.json();
+        populateCarDropdown();
+    } catch(e) {}
+}
+
+async function forceRefresh() {
+    const btn = document.getElementById('btn-refresh');
+    btn.style.animation = 'spin 0.5s linear infinite';
+    showToast('🔄 Se actualizează prețurile...');
+
+    try {
+        await fetch('/api/refresh', { method: 'POST' });
+        await new Promise(r => setTimeout(r, 2000));
+        await loadStations();
+        await loadAverages();
+        renderCards();
+        showToast('✅ Prețuri actualizate!');
+    } catch(e) {
+        showToast('⚠️ Eroare la actualizare');
+    }
+
+    btn.style.animation = '';
+}
+
+function startAutoRefresh() {
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    autoRefreshTimer = setInterval(async () => {
+        await loadStations();
+        await loadAverages();
+        renderCards();
+    }, 5 * 60 * 1000); // 5 minute
+}
+
+// ============================================================
+//  RENDER CARDS
+// ============================================================
+function renderCards() {
+    const grid     = document.getElementById('stations-grid');
+    const retea    = document.getElementById('filter-retea').value;
+    const sort     = document.getElementById('filter-sort').value;
+
+    let filtered = allStations.filter(s => {
+        if (currentFuel !== 'toate' && !s.fuels.includes(currentFuel)) return false;
+        if (retea !== 'Toate' && s.retea !== retea) return false;
+        return true;
+    });
+
+    // Sortare
+    const sortFuel = currentFuel !== 'toate' ? currentFuel : 'benzina';
+    const getPrice = s => {
+        const p = pricesData[s.id]?.[sortFuel];
+        return p ? parseFloat(p) : null;
+    };
+
+    if (sort === 'cheapest') {
+        filtered.sort((a, b) => {
+            const pa = getPrice(a), pb = getPrice(b);
+            if (pa === null && pb === null) return 0;
+            if (pa === null) return 1;
+            if (pb === null) return -1;
+            return pa - pb;
+        });
+    } else if (sort === 'expensive') {
+        filtered.sort((a, b) => {
+            const pa = getPrice(a), pb = getPrice(b);
+            if (pa === null && pb === null) return 0;
+            if (pa === null) return 1;
+            if (pb === null) return -1;
+            return pb - pa;
+        });
+    } else {
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    // Status
+    document.getElementById('status-text').textContent =
+        `${filtered.length} stații din ${allStations.length} în Craiova`;
+
+    // Render
+    grid.innerHTML = '';
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-title">Nicio stație găsită</div>
+                <div class="empty-sub">Încearcă alt filtru</div>
+            </div>`;
+        return;
+    }
+
+    filtered.forEach((s, idx) => {
+        const card = makeCard(s, idx);
+        grid.appendChild(card);
+    });
+}
+
+function makeCard(station, idx) {
+    const prices = pricesData[station.id] || {};
+    const color  = NET_COLORS[station.retea] || '#666';
+    const hasGpl = station.fuels.includes('gpl');
+
+    const card = document.createElement('div');
+    card.className = 'station-card';
+    card.style.animationDelay = `${idx * 40}ms`;
+
+    // Top bar colorată
+    const bar = document.createElement('div');
+    bar.className = 'card-top-bar';
+    bar.style.background = `linear-gradient(90deg, ${color}, transparent)`;
+    card.appendChild(bar);
+
+    const body = document.createElement('div');
+    body.className = 'card-body';
+
+    // Header card
+    const header = document.createElement('div');
+    header.className = 'card-header';
+
+    // Logo
+    const logo = document.createElement('div');
+    logo.className = 'station-logo';
+    logo.style.background = `linear-gradient(135deg, ${color}, ${color}99)`;
+    logo.textContent = station.retea === 'ROMPETROL' ? 'R' :
+                       station.retea === 'EUROGENETIC' ? 'EGC' :
+                       station.retea.substring(0, 3);
+    header.appendChild(logo);
+
+    // Info
+    const info = document.createElement('div');
+    info.className = 'card-info';
+    info.innerHTML = `
+        <div class="station-name">${station.name}</div>
+        <div class="station-meta">${station.retea} • ${station.addr}</div>
+    `;
+    header.appendChild(info);
+
+    if (hasGpl) {
+        const tag = document.createElement('div');
+        tag.className = 'gpl-tag';
+        tag.textContent = 'GPL';
+        header.appendChild(tag);
+    }
+
+    body.appendChild(header);
+
+    // Prețuri
+    const pricesRow = document.createElement('div');
+    pricesRow.className = 'prices-row';
+
+    const keysToShow = getPriceKeys();
+    let shown = 0;
+
+    keysToShow.forEach(key => {
+        const val = prices[key];
+        if (!val) return;
+        const color2 = FUEL_COLORS[key] || 'var(--text2)';
+        const badge = document.createElement('div');
+        badge.className = 'price-badge';
+        badge.style.borderLeftColor = color2;
+        badge.innerHTML = `
+            <div class="price-badge-label">${FUEL_LABELS_MAP[key] || key}</div>
+            <div class="price-badge-value" style="color:${color2}">
+                ${parseFloat(val).toFixed(2)}<span class="price-unit">RON</span>
+            </div>`;
+        pricesRow.appendChild(badge);
+        shown++;
+    });
+
+    if (shown === 0) {
+        if (isLoading) {
+            pricesRow.innerHTML = `
+                <div class="loading-wrap">
+                    <div class="spinner"></div>
+                    <span class="loading-text">Se descarcă prețurile...</span>
+                </div>`;
+        } else {
+            pricesRow.innerHTML = `<span style="color:var(--text3);font-size:13px">— prețuri indisponibile —</span>`;
+        }
+    }
+
+    body.appendChild(pricesRow);
+
+    // Cost plin (dacă user configurat)
+    if (currentUser?.capacitate > 0) {
+        const costEl = makeCostInfo(station, prices);
+        if (costEl) body.appendChild(costEl);
+    }
+
+    // Footer cu buton navigare
+    const footer = document.createElement('div');
+    footer.className = 'card-footer';
+    const navLink = document.createElement('a');
+    navLink.className = 'btn-navigate';
+    navLink.href = `https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}&travelmode=driving`;
+    navLink.target = '_blank';
+    navLink.rel = 'noopener';
+    navLink.innerHTML = `🗺️ Navighează`;
+    footer.appendChild(navLink);
+    body.appendChild(footer);
+
+    card.appendChild(body);
+    return card;
+}
+
+function getPriceKeys() {
+    const all = ['benzina', 'benzina_premium', 'motorina', 'motorina_premium', 'gpl'];
+    if (currentFuel === 'toate') return all;
+    if (currentFuel === 'benzina') return ['benzina', 'benzina_premium'];
+    if (currentFuel === 'motorina') return ['motorina', 'motorina_premium'];
+    if (currentFuel === 'gpl') return ['gpl'];
+    return all;
+}
+
+function makeCostInfo(station, prices) {
+    const carb = currentUser.carburant;
+    const cap  = currentUser.capacitate;
+    const pStr = prices[carb];
+    if (!pStr) return null;
+
+    const pret = parseFloat(pStr);
+    if (isNaN(pret)) return null;
+
+    const cost      = pret * cap;
+    const medieOras = averages[carb];
+    const el = document.createElement('div');
+    el.className = 'cost-info';
+    el.innerHTML = `<div class="cost-total">💧 Plin ${cap}L: <strong>${cost.toFixed(2)} RON</strong></div>`;
+
+    if (medieOras) {
+        const costMed = medieOras * cap;
+        const diff    = costMed - cost;
+        const cls     = diff > 1 ? 'save' : diff < -1 ? 'lose' : 'avg';
+        const txt     = diff > 1  ? `💰 Economie față de medie: ${diff.toFixed(2)} RON` :
+                        diff < -1 ? `💸 Peste medie cu: ${Math.abs(diff).toFixed(2)} RON` :
+                                    `⚖️ Preț mediu în Craiova`;
+        el.innerHTML += `<div class="cost-diff ${cls}">${txt}</div>`;
+    }
+
+    return el;
+}
+
+// ============================================================
+//  FILTRE & SORTARE
+// ============================================================
+function setFuel(fuel, btnEl) {
+    currentFuel = fuel;
+    document.querySelectorAll('.btn-fuel').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+    renderCards();
+}
+
+function showCheapest() {
+    document.getElementById('filter-sort').value = 'cheapest';
+    renderCards();
+    scrollToTop();
+    showToast('💰 Sortare: cel mai ieftin');
+}
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+//  PROFIL
+// ============================================================
+function openProfile() {
+    const modal = document.getElementById('profile-modal');
+    modal.classList.add('open');
+
+    if (currentUser) {
+        document.getElementById('input-name').value  = currentUser.nume || '';
+        document.getElementById('input-email').value = currentUser.email || '';
+        document.getElementById('logout-section').style.display = 'block';
+        // Selectăm carburantul salvat
+        document.querySelectorAll('.radio-btn').forEach(b => {
+            b.classList.toggle('selected', b.dataset.val === currentUser.carburant);
+        });
+    }
+}
+
+function handleModalClick(e) {
+    if (e.target === document.getElementById('profile-modal')) {
+        document.getElementById('profile-modal').classList.remove('open');
+    }
+}
+
+function selectCarb(el) {
+    document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function populateCarDropdown() {
+    const sel = document.getElementById('sel-marca');
+    sel.innerHTML = '<option value="">Alege marca</option>';
+    Object.keys(carDb).forEach(marca => {
+        sel.innerHTML += `<option value="${marca}">${marca}</option>`;
+    });
+    if (currentUser?.masina && currentUser.masina !== 'Nedefinit') {
+        const parts = currentUser.masina.split(' ');
+        if (parts.length >= 1 && carDb[parts[0]]) {
+            sel.value = parts[0];
+            updateModels();
+        }
+    }
+}
+
+function updateModels() {
+    const marca  = document.getElementById('sel-marca').value;
+    const selMod = document.getElementById('sel-model');
+    selMod.innerHTML = '<option value="">Alege modelul</option>';
+    document.getElementById('sel-gen').innerHTML = '<option value="">Alege generația</option>';
+
+    if (marca && carDb[marca]) {
+        Object.keys(carDb[marca]).forEach(model => {
+            selMod.innerHTML += `<option value="${model}">${model}</option>`;
+        });
+    }
+}
+
+function updateGens() {
+    const marca  = document.getElementById('sel-marca').value;
+    const model  = document.getElementById('sel-model').value;
+    const selGen = document.getElementById('sel-gen');
+    selGen.innerHTML = '<option value="">Alege generația</option>';
+
+    if (marca && model && carDb[marca]?.[model]) {
+        carDb[marca][model].forEach(item => {
+            selGen.innerHTML += `<option value="${item.gen}">${item.gen} — ${item.motoare}</option>`;
+        });
+    }
+}
+
+async function saveProfile() {
+    const name   = document.getElementById('input-name').value.trim();
+    const email  = document.getElementById('input-email').value.trim();
+    const marca  = document.getElementById('sel-marca').value;
+    const model  = document.getElementById('sel-model').value;
+    const gen    = document.getElementById('sel-gen').value;
+    const carb   = document.querySelector('.radio-btn.selected')?.dataset.val || 'benzina';
+    const errEl  = document.getElementById('form-err');
+
+    if (!name || !email || !marca || !model || !gen) {
+        errEl.style.display = 'block';
+        return;
+    }
+    errEl.style.display = 'none';
+
+    let capacitate = 50;
+    const masini = carDb[marca]?.[model] || [];
+    const found  = masini.find(m => m.gen === gen);
+    if (found) capacitate = found.rezervor;
+
+    const user = {
+        email, nume: name,
+        masina: `${marca} ${model} (${gen})`,
+        carburant: carb,
+        capacitate,
+    };
+
+    try {
+        await fetch('/api/user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user),
+        });
+    } catch(e) {}
+
+    currentUser = user;
+    localStorage.setItem('hf_user', JSON.stringify(user));
+    updateProfileUI();
+    document.getElementById('profile-modal').classList.remove('open');
+    showToast(`✅ Salut, ${name}! Mașina salvată.`);
+    renderCards();
+}
+
+function logout() {
+    currentUser = null;
+    localStorage.removeItem('hf_user');
+    updateProfileUI();
+    document.getElementById('profile-modal').classList.remove('open');
+    document.getElementById('input-name').value  = '';
+    document.getElementById('input-email').value = '';
+    document.getElementById('logout-section').style.display = 'none';
+    renderCards();
+    showToast('👋 Deconectat');
+}
+
+function updateProfileUI() {
+    const icon  = document.getElementById('profile-icon');
+    const label = document.getElementById('profile-label');
+    if (currentUser) {
+        icon.textContent  = '👤';
+        label.textContent = currentUser.nume.split(' ')[0];
+    } else {
+        icon.textContent  = '👤';
+        label.textContent = 'Cont';
+    }
+}
+
+// ============================================================
+//  UTILITARE
+// ============================================================
+function setLoadingBar(pct) {
+    const bar = document.getElementById('loading-bar');
+    bar.style.width = pct + '%';
+    if (pct >= 100) {
+        setTimeout(() => { bar.style.width = '0%'; }, 500);
+    }
+}
+
+function updateLastUpdate(ts) {
+    if (!ts) return;
+    const el   = document.getElementById('last-update');
+    const date = new Date(ts * 1000);
+    el.textContent = `Actualizat: ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+}
+
+function showToast(msg, duration = 2500) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ============================================================
+//  START
+// ============================================================
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# ============================================================
+#  HOTFUEL Web — requirements.txt
+#  Instalare: pip install -r requirements_web.txt
+# ============================================================
+
+# Web framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# Scraping (același ca înainte)
+requests==2.32.3
+beautifulsoup4==4.12.3
+
+# Baza de date (SQLite e inclus în Python)
+# — nu necesită instalare separată
+
+# Google Auth (opțional, dacă adaugi OAuth web mai târziu)
+# google-auth-oauthlib
+# google-api-python-client
